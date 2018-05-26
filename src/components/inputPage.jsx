@@ -32,16 +32,18 @@ class InputPage extends Component {
     }
     _clickHandlerError = (e) => {
         this.setState((currentState) => {
-            const bytesLength = currentState.disruptedSignal.length;
-            let disruptedSignal = '';
+            const { disruptedSignal } = currentState;
+            const bytes = disruptedSignal.split('');
 
-            for (let i = 0; i < bytesLength; i++) {
-                disruptedSignal += (Math.random() > 0.5) ? '1' : '0';
+            for (let i = 0; i < 2; i++) {
+                const index = Math.floor(Math.random() * bytes.length);
+                const byte = bytes[index];
+                bytes[index] = (byte === '0') ? '1' : '0';
             }
 
             return {
                 ...currentState,
-                disruptedSignal
+                disruptedSignal: bytes.join('')
             };
         })
     }
