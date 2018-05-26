@@ -3,6 +3,7 @@ import CRCService from '../utils/CRC.js';
 import HammingCodingService from '../utils/hammingCode.js';
 import ParityService from '../utils/parity.js';
 import './inputPage.css';
+import leftPad from 'left-pad';
 
 class InputPage extends Component {
 
@@ -21,10 +22,10 @@ class InputPage extends Component {
     }
 
     _clickHandlerInput = (e) => {
-        console.log('convert');
-
-        let signal = "10101011";
-
+        let signal = this.state.inputText
+            .split('')
+            .reduce((prev, curr) => prev + leftPad(curr.charCodeAt(0).toString('2', '0', 8)), '');
+  
         this.setState({inputSignal: signal});
         this.setState({disruptedSignal: signal});
         this.setState({outputSignal: this.encode(signal)});
@@ -55,9 +56,8 @@ class InputPage extends Component {
             case "hamming":
                 return HammingCodingService.execCoding(val);
             case "parity":
-                return ParityService.testFunc(val);
             default: 
-                return ParityService.testFunc(val);
+                return ParityService.encode(val);
         }
     }
 
@@ -69,9 +69,8 @@ class InputPage extends Component {
             case "hamming":
                 return HammingCodingService.findErrors(val);
             case "parity":
-                return ParityService.testFunc(val);
-            default: 
-                return ParityService.testFunc(val);
+            default:
+                return ParityService.findErrors(val);
         }
     }
 

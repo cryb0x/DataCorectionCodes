@@ -35,7 +35,7 @@ class HammingCodingService {
         if(temp.charAt(i)==='1') paritySum[i]++;
       }
     }
-    
+
     for(let i =0;i<paritySum.length;i++)
     {
       if(paritySum[i]%2===1) convertedData[Math.pow(2,i)-1]=1;
