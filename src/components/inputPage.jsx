@@ -15,24 +15,7 @@ class InputPage extends Component {
             disruptedSignal: "disruptedSignal",
             outputSignal: "outputSignal",
         }
-
-        switch(this.props.code){
-            case "crc":
-                this.codingController= new CRCService();
-                break;
-            case "hammond":
-                this.codingController= new HammondCodingService();
-                break;
-            case "parity":
-                this.codingController= new ParityService();
-                break;
-            default: 
-                this.codingController= new ParityService();
-                break;
-        }
     }
-
-    codingController;
 
     _clickHandlerInput = (e) => {
         console.log('convert');
@@ -55,8 +38,21 @@ class InputPage extends Component {
         this.setState({disruptedSignal: e.target.value});
     }
 
+    encode(){
+        switch(this.props.code){
+            case "crc":
+                return CRCService.testFunc();
+            case "hammond":
+                return HammondCodingService.testFunc();
+            case "parity":
+                return ParityService.testFunc();
+            default: 
+                return ParityService.testFunc();
+        }
+    }
 
     markErrors(){
+
         return 'marked output '+this.state.outputSignal;
     }
 
