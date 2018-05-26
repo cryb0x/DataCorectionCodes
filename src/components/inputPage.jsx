@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import CRCService from '../utils/CRC.js';
-import HammondCodingService from '../utils/hammondCode.js';
+import HammingCodingService from '../utils/hammingCode.js';
 import ParityService from '../utils/parity.js';
 import './inputPage.css';
 
@@ -42,8 +42,8 @@ class InputPage extends Component {
         switch(this.props.code){
             case "crc":
                 return CRCService.testFunc();
-            case "hammond":
-                return HammondCodingService.testFunc();
+            case "hamming":
+                return HammingCodingService.testFunc();
             case "parity":
                 return ParityService.testFunc();
             default: 

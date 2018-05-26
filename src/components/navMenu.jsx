@@ -8,7 +8,7 @@ class NavMenu extends Component {
     return (
         <div className="navWrapper">
             <NavButton name="CRC" value="crc" handleClick={this.props.handleClick}/>
-            <NavButton name="Hammond Code" value="hammond" handleClick={this.props.handleClick}/>
+            <NavButton name="Hamming Code" value="hamming" handleClick={this.props.handleClick}/>
             <NavButton name="Parity" value="parity" handleClick={this.props.handleClick}/>
         </div>
     );
