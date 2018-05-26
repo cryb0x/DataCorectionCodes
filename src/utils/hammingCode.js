@@ -25,15 +25,20 @@ class HammingCodingService {
     }
 
     for(currentChar=1;currentChar<=convertedData.length;currentChar++){
+
+      let temp =(+currentChar).toString(2);
+      while(temp.length<4){
+        temp="0"+temp;
+      }
       for(let i =0;i<paritySum.length;i++)
       {
-        if((+currentChar).toString(2).charAt(i)==='1') paritySum[i]++;
+        if(temp.charAt(i)==='1') paritySum[i]++;
       }
     }
     
     for(let i =0;i<paritySum.length;i++)
     {
-      if(paritySum[i]%2!==0) convertedData[Math.pow(2,i)-1]=1;
+      if(paritySum[i]%2===1) convertedData[Math.pow(2,i)-1]=1;
     }
 
     return convertedData.reverse().toString().replace(/,/g, '');
@@ -52,40 +57,54 @@ class HammingCodingService {
       if(errorCode[i]===1) errorPosition++;
     }
 
-    if(errorCode!==0){
+    if(errorPosition!==0){
       errorPosition=data.length-errorPosition;
       data=data.split("");
 
       if(data[errorPosition]==="1") data[errorPosition]="0"; else data[errorPosition]="1";
       return data.toString().replace(/,/g, '');
     }
-    return;
+    return data;
   }
 
   static findErrors(data){
     let paritySum=[];
     let currentPower=1;
-    
+
     while(currentPower<=data.length){
       paritySum.push(0);
       currentPower*=2;
     }
 
     for(let i=data.length;i>0;i--){
+      let temp =(+(data.length-i+1)).toString(2);
+      while(temp.length<4){
+        temp="0"+temp;
+      }
       for(let j =0;j<paritySum.length;j++)
       {
-        if(data.charAt(j)==='1') paritySum[j]++;
+        if(temp.charAt(j)==='1') paritySum[j]++;
       }
     }
 
+    currentPower=1;
     for(let i =0;i<paritySum.length;i++)
     {
-      paritySum[i]%2!==0 ? paritySum[i]=1 : paritySum[i]=0;
+
+      if(paritySum[i]%2===1)
+      {
+        data[data.length-currentPower]==='1' ? paritySum[i]=0 : paritySum[i]=1;
+      }
+      else{
+        data[data.length-currentPower]==='0' ? paritySum[i]=0 : paritySum[i]=1;
+      }
+      currentPower*=2;
     }
 
     return paritySum;
   }
-  
+
+
   static removeRedundancy(data){
     let currentPower=1;
     let pointer=1;

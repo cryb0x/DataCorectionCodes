@@ -23,7 +23,7 @@ class InputPage extends Component {
     _clickHandlerInput = (e) => {
         console.log('convert');
 
-        let signal = "1010101";
+        let signal = "10101011";
 
         this.setState({inputSignal: signal});
         this.setState({disruptedSignal: signal});
