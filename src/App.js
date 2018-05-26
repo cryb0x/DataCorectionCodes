@@ -8,7 +8,7 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      navTarget: "hammond"
+      navTarget: "hamming"
     }
 
     this._setNav = this._setNav.bind(this);
