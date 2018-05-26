@@ -101,44 +101,61 @@ class InputPage extends Component {
         }
     }
 
+    renderTitle(){
+        switch(this.props.code){
+            case "crc":
+                return "CRC";
+            case "hamming":
+                return "Hamming Code";
+            case "parity":
+                return "Parity";
+            default: 
+                return "Parity";
+        }
+    }
+
     render() {
         return (
         <div className="wrapper">
-            <h1>{this.props.code}</h1>
-
-            <div className="block">
-                <h3>Input text:</h3>
-                <textarea onChange={this._changeHandlerInput}/>
-                <button className="button" onClick={this._clickHandlerInput}>Convert</button>
+            <div className="header">
+                <h1>{this.renderTitle()}</h1>
             </div>
 
-            <div className="block">
+            <div className="block inputBlock">
+                <h3>Input text:</h3>
+                <textarea onChange={this._changeHandlerInput}/>
+                <button className="button inputButton" onClick={this._clickHandlerInput}>Convert</button>
+            </div>
+
+            <div className="block inputBlock">
                 <h3>Input signal:</h3>
                 <textarea disabled value={this.state.inputSignal}/>
             </div>
 
-            <div className="block">
+            <div className="block inputBlock">
                 <h3>Disrupted signal:</h3>
                 <textarea onChange={this._changeHandlerError} value={this.state.disruptedSignal}/>
-                <button className="button" onClick={this._clickHandlerError}>Random error</button>
+                <button className="button inputButton" onClick={this._clickHandlerError}>Random error</button>
 
-                <button className="button" onClick={this._clickHandlerDisrupt}>Disrupt</button>
+                <button className="button inputButton" onClick={this._clickHandlerDisrupt}>Disrupt</button>
             </div>
 
-            <div className="block">
-                <h3>Output signal:</h3>
-                <textarea disabled value={this.state.outputSignal}/>
+            <div className="block inputBlock">
+                <div className="block inputBlock">
+                    <h3>Output signal:</h3>
+                    <textarea disabled value={this.state.outputSignal}/>
+                </div>
 
-                 <div className="block">
-                    <div>
+                 <div className="block outputBlock">
+                    <div className="block inputBlock">
                         <b>Errors found:</b>
                         <textarea disabled value={this.state.outputSignalErr}/>
                     </div>
-                    <div>
+                    <div className="block inputBlock">
                         <b>Errors fixed:</b>
                         <textarea disabled value={this.state.outputSignalFix}/>
                     </div>
-                    <div>
+                    <div className="block inputBlock"> 
                         <b>Without redundancy:</b>
                         <textarea disabled value={this.state.outputSignalRed}/>
                     </div>
