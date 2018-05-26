@@ -44,12 +44,46 @@ class HammingCodingService {
     return decodedData;
   }
 
-  static markErrors(data){
-    let paritySum=[];
-    
-    for(let i = 1; i<=data.length; i++){
-      
+  static fixErrors(data){
+    let errorCode = HammingCodingService.findErrors(data);
+    let errorPosition=0;
+
+    for(let i = 1;i<=data.length;i++){
+      if(errorCode[i]===1) errorPosition++;
     }
+
+    if(errorCode!==0){
+      errorPosition=data.length-errorPosition;
+      data=data.split("");
+      
+      if(data[errorPosition]==="1") data[errorPosition]="0"; else data[errorPosition]="1";
+      return data.toString().replace(/,/g, '');
+    }
+    return;
+  }
+
+  static findErrors(data){
+    let paritySum=[];
+    let currentPower=1;
+    
+    while(currentPower<=data.length){
+      paritySum.push(0);
+      currentPower*=2;
+    }
+
+    for(let i=data.length;i>0;i--){
+      for(let j =0;j<paritySum.length;j++)
+      {
+        if(data.charAt(j)==='1') paritySum[j]++;
+      }
+    }
+
+    for(let i =0;i<paritySum.length;i++)
+    {
+      paritySum[i]%2!==0 ? paritySum[i]=1 : paritySum[i]=1;
+    }
+
+    return paritySum;
   }
   
   static removeRedundancy(data){
