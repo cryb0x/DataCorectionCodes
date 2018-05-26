@@ -10,24 +10,34 @@ class InputPage extends Component {
     constructor(props){
         super(props);
         this.state={
-            inputText: "",
-            inputSignal: "inputSignal",
-            disruptedSignal: "disruptedSignal",
-            outputSignal: "outputSignal",
+            inputText: "Input Text",
+            inputSignal: "Input Signal",
+            disruptedSignal: "Disrupted Signal",
+            outputSignal: "Output Signal",
+            outputSignalErr: "N/A",
+            outputSignalFix: "N/A",
+            outputSignalRed: "N/A",
         }
     }
 
     _clickHandlerInput = (e) => {
         console.log('convert');
-        this.setState({inputSignal: this.state.inputText+" binary"});
-        this.setState({disruptedSignal: this.state.inputText+" encoded"});
-        this.setState({outputSignal: this.state.outputSignal+" encoded"});
+
+        let signal = "1010101";
+
+        this.setState({inputSignal: signal});
+        this.setState({disruptedSignal: signal});
+        this.setState({outputSignal: this.encode(signal)});
     }
     _clickHandlerError = (e) => {
         console.log('error');
     }
     _clickHandlerDisrupt = (e) => {
-        this.setState({outputSignal: this.state.disruptedSignal});
+        this.setState({outputSignal: this.encode(this.state.disruptedSignal)});
+        this.setState({outputSignalErr: this.markErrors(this.state.outputSignal)});
+        this.setState({outputSignalFix: this.fixErrors(this.state.outputSignal)},
+        ()=>{this.setState({outputSignalRed: this.trimRedundancy(this.state.outputSignalFix)});}
+        );
     }
 
 
@@ -38,30 +48,57 @@ class InputPage extends Component {
         this.setState({disruptedSignal: e.target.value});
     }
 
-    encode(){
+    encode(val){
         switch(this.props.code){
             case "crc":
-                return CRCService.testFunc();
+                return CRCService.testFunc(val);
             case "hamming":
-                return HammingCodingService.testFunc();
+                return HammingCodingService.execCoding(val);
             case "parity":
-                return ParityService.testFunc();
+                return ParityService.testFunc(val);
             default: 
-                return ParityService.testFunc();
+                return ParityService.testFunc(val);
         }
     }
 
-    markErrors(){
 
-        return 'marked output '+this.state.outputSignal;
+    markErrors(val){
+        switch(this.props.code){
+            case "crc":
+                return CRCService.testFunc(val);
+            case "hamming":
+                return HammingCodingService.findErrors(val);
+            case "parity":
+                return ParityService.testFunc(val);
+            default: 
+                return ParityService.testFunc(val);
+        }
     }
 
-    fixErrors(){
-        return 'fixed output '+this.state.outputSignal;
+    fixErrors(val){
+        switch(this.props.code){
+            case "crc":
+                return CRCService.testFunc(val);
+            case "hamming":
+                return HammingCodingService.fixErrors(val);
+            case "parity":
+                return ParityService.testFunc(val);
+            default: 
+                return ParityService.testFunc(val);
+        }
     }
 
-    trimRedundancy(){
-        return 'fixed output '+this.state.outputSignal;
+    trimRedundancy(val){
+        switch(this.props.code){
+            case "crc":
+                return CRCService.testFunc(val);
+            case "hamming":
+                return HammingCodingService.removeRedundancy(val);
+            case "parity":
+                return ParityService.testFunc(val);
+            default: 
+                return ParityService.testFunc(val);
+        }
     }
 
     render() {
@@ -93,14 +130,18 @@ class InputPage extends Component {
                 <textarea disabled value={this.state.outputSignal}/>
 
                  <div className="block">
-                    <b>Errors found:</b>
-                    <textarea disabled value={this.markErrors()}/>
-
-                    <b>Errors fixed:</b>
-                    <textarea disabled value={this.fixErrors()}/>
-
-                    <b>Without redundancy:</b>
-                    <textarea disabled value={this.trimRedundancy()}/>
+                    <div>
+                        <b>Errors found:</b>
+                        <textarea disabled value={this.state.outputSignalErr}/>
+                    </div>
+                    <div>
+                        <b>Errors fixed:</b>
+                        <textarea disabled value={this.state.outputSignalFix}/>
+                    </div>
+                    <div>
+                        <b>Without redundancy:</b>
+                        <textarea disabled value={this.state.outputSignalRed}/>
+                    </div>
                 </div>
             </div>
         </div>

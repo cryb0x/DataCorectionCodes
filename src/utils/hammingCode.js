@@ -55,7 +55,7 @@ class HammingCodingService {
     if(errorCode!==0){
       errorPosition=data.length-errorPosition;
       data=data.split("");
-      
+
       if(data[errorPosition]==="1") data[errorPosition]="0"; else data[errorPosition]="1";
       return data.toString().replace(/,/g, '');
     }
@@ -80,7 +80,7 @@ class HammingCodingService {
 
     for(let i =0;i<paritySum.length;i++)
     {
-      paritySum[i]%2!==0 ? paritySum[i]=1 : paritySum[i]=1;
+      paritySum[i]%2!==0 ? paritySum[i]=1 : paritySum[i]=0;
     }
 
     return paritySum;
@@ -90,17 +90,15 @@ class HammingCodingService {
     let currentPower=1;
     let pointer=1;
 
-    for(let i=data.length;i>0;i++){
+    for(let i=data.length;i>0;i--){
       if(pointer===currentPower){
-        data = data.slice(0, i) + data.slice(i);
+        data = data.slice(0, i-1) + data.slice(i);
+        currentPower*=2;
       }
+      pointer++;
     }
 
     return data;
-  }
-
-  static convertBin(val){
-    return (+val).toString(2);
   }
 
   static testFunc() {
