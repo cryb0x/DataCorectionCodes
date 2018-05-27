@@ -13,6 +13,7 @@ class InputPage extends Component {
         this.state={
             inputText: "Input Text",
             inputSignal: "Input Signal",
+            encodedSignal: "Encoded Signal",
             disruptedSignal: "Disrupted Signal",
             outputSignal: "Output Signal",
             outputSignalErr: "N/A",
@@ -26,9 +27,11 @@ class InputPage extends Component {
             .split('')
             .reduce((prev, curr) => prev + leftPad(curr.charCodeAt(0).toString('2', '0', 8)), '');
 
+        let temp=this.encode(signal);
         this.setState({inputSignal: signal});
-        this.setState({disruptedSignal: signal});
-        this.setState({outputSignal: this.encode(signal)});
+        this.setState({encodedSignal: temp});
+        this.setState({disruptedSignal: temp});
+        this.setState({outputSignal: temp});
     }
     _clickHandlerError = (e) => {
         this.setState((currentState) => {
@@ -48,11 +51,13 @@ class InputPage extends Component {
         })
     }
     _clickHandlerDisrupt = (e) => {
-        this.setState({outputSignal: this.encode(this.state.disruptedSignal)});
-        this.setState({outputSignalErr: this.markErrors(this.state.outputSignal)});
-        this.setState({outputSignalFix: this.fixErrors(this.state.outputSignal)},
-        ()=>{this.setState({outputSignalRed: this.trimRedundancy(this.state.outputSignalFix)});}
-        );
+        this.setState({outputSignal: this.state.disruptedSignal},
+        ()=>{
+            this.setState({outputSignalErr: this.markErrors(this.state.outputSignal)});
+            this.setState({outputSignalFix: this.fixErrors(this.state.outputSignal)},
+            ()=>{this.setState({outputSignalRed: this.trimRedundancy(this.state.outputSignalFix)});}
+            );
+        });
     }
 
 
@@ -143,6 +148,11 @@ class InputPage extends Component {
             <div className="block inputBlock">
                 <h3>Input signal:</h3>
                 <textarea disabled value={this.state.inputSignal}/>
+            </div>
+
+            <div className="block inputBlock">
+                <h3>Encoded signal:</h3>
+                <textarea disabled value={this.state.encodedSignal}/>
             </div>
 
             <div className="block inputBlock">
