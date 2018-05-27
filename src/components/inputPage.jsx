@@ -26,7 +26,7 @@ class InputPage extends Component {
         let signal = this.state.inputText
             .split('')
             .reduce((prev, curr) => prev + leftPad(curr.charCodeAt(0).toString('2', '0', 8)), '');
-  
+
         let temp=this.encode(signal);
         this.setState({inputSignal: signal});
         this.setState({encodedSignal: temp});
@@ -34,7 +34,21 @@ class InputPage extends Component {
         this.setState({outputSignal: temp});
     }
     _clickHandlerError = (e) => {
-        console.log('error');
+        this.setState((currentState) => {
+            const { disruptedSignal } = currentState;
+            const bytes = disruptedSignal.split('');
+
+            for (let i = 0; i < 2; i++) {
+                const index = Math.floor(Math.random() * bytes.length);
+                const byte = bytes[index];
+                bytes[index] = (byte === '0') ? '1' : '0';
+            }
+
+            return {
+                ...currentState,
+                disruptedSignal: bytes.join('')
+            };
+        })
     }
     _clickHandlerDisrupt = (e) => {
         this.setState({outputSignal: this.state.disruptedSignal},
@@ -61,7 +75,7 @@ class InputPage extends Component {
             case "hamming":
                 return HammingCodingService.execCoding(val);
             case "parity":
-            default: 
+            default:
                 return ParityService.encode(val);
         }
     }
@@ -87,7 +101,7 @@ class InputPage extends Component {
                 return HammingCodingService.fixErrors(val);
             case "parity":
                 return ParityService.testFunc(val);
-            default: 
+            default:
                 return ParityService.testFunc(val);
         }
     }
@@ -100,7 +114,7 @@ class InputPage extends Component {
                 return HammingCodingService.removeRedundancy(val);
             case "parity":
                 return ParityService.testFunc(val);
-            default: 
+            default:
                 return ParityService.testFunc(val);
         }
     }
@@ -113,7 +127,7 @@ class InputPage extends Component {
                 return "Hamming Code";
             case "parity":
                 return "Parity";
-            default: 
+            default:
                 return "Parity";
         }
     }
@@ -164,7 +178,7 @@ class InputPage extends Component {
                         <b>Errors fixed:</b>
                         <textarea disabled value={this.state.outputSignalFix}/>
                     </div>
-                    <div className="block inputBlock"> 
+                    <div className="block inputBlock">
                         <b>Without redundancy:</b>
                         <textarea disabled value={this.state.outputSignalRed}/>
                     </div>
