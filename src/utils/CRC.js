@@ -1,6 +1,3 @@
-import { arrayIntoChunks } from "./utils";
-import { LETTER_SIZE } from "./parity";
-
 const CRC_TYPES = {
   "crc16reverse": {
     POLYNOMIAL: 0x14003,
@@ -95,19 +92,7 @@ class CRCService {
   }
 
   static fix(data, type = 'crc16') {
-    const { KEY_LENGTH } = CRC_TYPES[type];
-    let errors = 0;
-    let dataType = new Array(data.length);
-
     data = data.split('').map((byte) => parseInt(byte, 10));
-    let crc = this.countCRC(data, type);
-    let valid = true, iValid = [];
-
-    crc.forEach((byte, i) => {
-      if (byte === 1) {
-        valid = false;
-      }
-    });
 
     return data.join('');
   }
