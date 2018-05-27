@@ -8,7 +8,7 @@ class ParityService {
     return 'ziemniak';
   }
 
-  static encode(bytecode) {
+  static getParityBytes(bytecode) {
     const letters = arrayIntoChunks(bytecode.split(''), LETTER_SIZE);
 
     return letters.map((letter) => {
@@ -17,7 +17,16 @@ class ParityService {
         if (byte === '0') onesCount++;
       })
       const parityByte = (onesCount % 2) ? 1 : 0;
-      return `${letter.join('')}${parityByte}`
+      return parityByte
+    });
+  }
+
+  static encode(bytecode) {
+    const letters = arrayIntoChunks(bytecode.split(''), LETTER_SIZE);
+    const parityBytes = this.getParityBytes(bytecode);
+
+    return letters.map((letter, index) => {
+      return `${letter.join('')}${parityBytes[index]}`
     }).join('');
   }
 
@@ -35,7 +44,16 @@ class ParityService {
       const checkedParityByte = (onesCount % 2) ? '1' : '0';
 
       return parityByte === checkedParityByte ? 0 : 1;
-    })
+    });
+  }
+
+  static removeRedundancy(bytecode) {
+    const letters = arrayIntoChunks(bytecode.split(''), LETTER_SIZE + 1);
+
+    return letters.map((letter) => {
+      letter.pop();
+      return letter.join('');
+    }).join('');
   }
 }
 

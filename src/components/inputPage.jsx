@@ -100,9 +100,8 @@ class InputPage extends Component {
             case "hamming":
                 return HammingCodingService.fixErrors(val);
             case "parity":
-                return ParityService.testFunc(val);
             default:
-                return ParityService.testFunc(val);
+                return val;
         }
     }
 
@@ -113,9 +112,8 @@ class InputPage extends Component {
             case "hamming":
                 return HammingCodingService.removeRedundancy(val);
             case "parity":
-                return ParityService.testFunc(val);
             default:
-                return ParityService.testFunc(val);
+                return ParityService.removeRedundancy(val);
         }
     }
 
@@ -126,7 +124,6 @@ class InputPage extends Component {
             case "hamming":
                 return "Hamming Code";
             case "parity":
-                return "Parity";
             default:
                 return "Parity";
         }
@@ -141,7 +138,7 @@ class InputPage extends Component {
 
             <div className="block inputBlock">
                 <h3>Input text:</h3>
-                <textarea onChange={this._changeHandlerInput}/>
+                <textarea value={this.state.inputText} onChange={this._changeHandlerInput}/>
                 <button className="button inputButton" onClick={this._clickHandlerInput}>Convert</button>
             </div>
 
@@ -174,10 +171,12 @@ class InputPage extends Component {
                         <b>Errors found:</b>
                         <textarea disabled value={this.state.outputSignalErr}/>
                     </div>
-                    <div className="block inputBlock">
-                        <b>Errors fixed:</b>
-                        <textarea disabled value={this.state.outputSignalFix}/>
-                    </div>
+                    {this.props.code !== 'parity' && (
+                        <div className="block inputBlock">
+                            <b>Errors fixed:</b>
+                            <textarea disabled value={this.state.outputSignalFix}/>
+                        </div>
+                    )}
                     <div className="block inputBlock">
                         <b>Without redundancy:</b>
                         <textarea disabled value={this.state.outputSignalRed}/>
