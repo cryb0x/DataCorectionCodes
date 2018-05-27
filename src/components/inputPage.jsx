@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import CRCService from '../utils/CRC.js';
+import { CRCService } from '../utils/CRC.js';
 import HammingCodingService from '../utils/hammingCode.js';
 import ParityService from '../utils/parity.js';
 import './inputPage.css';
@@ -10,7 +10,8 @@ class InputPage extends Component {
 
     constructor(props){
         super(props);
-        this.state={
+        this.state = {
+            crctype: 'crc16',
             inputText: "Input Text",
             inputSignal: "Input Signal",
             encodedSignal: "Encoded Signal",
@@ -60,6 +61,10 @@ class InputPage extends Component {
         });
     }
 
+    _clickHandlerRadioButton = (e) => {
+        this.setState({ crctype: e.target.value });
+    }
+
 
     _changeHandlerInput = (e) => {
         this.setState({inputText: e.target.value});
@@ -68,10 +73,10 @@ class InputPage extends Component {
         this.setState({disruptedSignal: e.target.value});
     }
 
-    encode(val){
+    encode(val) {
         switch(this.props.code){
             case "crc":
-                return CRCService.testFunc(val);
+                return CRCService.encode(val, this.state.crctype);
             case "hamming":
                 return HammingCodingService.execCoding(val);
             case "parity":
@@ -84,7 +89,7 @@ class InputPage extends Component {
     markErrors(val){
         switch(this.props.code){
             case "crc":
-                return CRCService.testFunc(val);
+                return CRCService.findErrors(val, this.state.encodedSignal);
             case "hamming":
                 return HammingCodingService.findErrors(val);
             case "parity":
@@ -96,7 +101,7 @@ class InputPage extends Component {
     fixErrors(val){
         switch(this.props.code){
             case "crc":
-                return CRCService.testFunc(val);
+                return CRCService.fix(val, this.state.crctype);
             case "hamming":
                 return HammingCodingService.fixErrors(val);
             case "parity":
@@ -108,7 +113,7 @@ class InputPage extends Component {
     trimRedundancy(val){
         switch(this.props.code){
             case "crc":
-                return CRCService.testFunc(val);
+                return CRCService.removeRedundancy(val);
             case "hamming":
                 return HammingCodingService.removeRedundancy(val);
             case "parity":
@@ -142,10 +147,14 @@ class InputPage extends Component {
                 <button className="button inputButton" onClick={this._clickHandlerInput}>Convert</button>
             </div>
 
-            <div className="block inputBlock">
-                <h3>Input signal:</h3>
-                <textarea disabled value={this.state.inputSignal}/>
-            </div>
+                {this.props.code === 'crc' && (
+                    <div className="block inputBlock">
+                        <h3>CRC type:</h3>
+                        <label><input type="radio" name="crctype" value="crc16" onClick={this._clickHandlerRadioButton} checked={this.state.crctype === 'crc16'} />CRC-16</label>
+                        <label><input type="radio" name="crctype" value="crc16reverse" onClick={this._clickHandlerRadioButton} checked={this.state.crctype === 'crc16reverse'} />CRC-16 REVERSED</label>
+                        <label><input type="radio" name="crctype" value="crc32" onClick={this._clickHandlerRadioButton} checked={this.state.crctype === 'crc32'} />CRC-32</label>
+                    </div>
+                )}
 
             <div className="block inputBlock">
                 <h3>Encoded signal:</h3>
@@ -153,17 +162,17 @@ class InputPage extends Component {
             </div>
 
             <div className="block inputBlock">
-                <h3>Disrupted signal:</h3>
-                <textarea onChange={this._changeHandlerError} value={this.state.disruptedSignal}/>
-                <button className="button inputButton" onClick={this._clickHandlerError}>Random error</button>
-
-                <button className="button inputButton" onClick={this._clickHandlerDisrupt}>Disrupt</button>
-            </div>
-
-            <div className="block inputBlock">
                 <div className="block inputBlock">
-                    <h3>Output signal:</h3>
-                    <textarea disabled value={this.state.outputSignal}/>
+                    <h3>Input signal:</h3>
+                    <textarea disabled value={this.state.inputSignal}/>
+                </div>
+
+                <div className="block inputBlock">
+                    <h3>Disrupted signal:</h3>
+                    <textarea onChange={this._changeHandlerError} value={this.state.disruptedSignal}/>
+                    <button className="button inputButton" onClick={this._clickHandlerError}>Random error</button>
+
+                    <button className="button inputButton" onClick={this._clickHandlerDisrupt}>Disrupt</button>
                 </div>
 
                  <div className="block outputBlock">
@@ -182,8 +191,8 @@ class InputPage extends Component {
                         <textarea disabled value={this.state.outputSignalRed}/>
                     </div>
                 </div>
+                </div>
             </div>
-        </div>
         );
     }
 }
