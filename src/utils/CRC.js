@@ -91,14 +91,14 @@ class CRCService {
     wrongBit = '';
     dataRecieved = dataRecieved.split('');
     const crc = this.countCRC(dataRecieved);
-    let ok = true;
-    for (var i = 0; i < CRC_TYPES[type].KEY_LENGTH && ok; i++) {
+    let valid = true;
+    for (var i = 0; i < CRC_TYPES[type].KEY_LENGTH && valid; i++) {
       if (crc[i] !== 0) {
-        if (ok) {
+        if (valid) {
           dataRecieved[i] = dataRecieved[i] ? 0 : 1;
           wrongBit = i;
         }
-        ok = false;
+        valid = false;
       }
     }
 
@@ -114,7 +114,6 @@ class CRCService {
         errors.push(i);
     }
 
-    console.log('find', wrongBit)
     return `fixed: ${wrongBit} \n not fixed: ${errors.join(',')}`;
   }
 
