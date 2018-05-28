@@ -13,6 +13,8 @@ const CRC_TYPES = {
   }
 };
 
+let wrongBit = '';
+
 function arrayCopy(src_table, src_start, dest_table, dest_start, length) {
   for (let i = 0; i < length; i++) {
     dest_table[dest_start + i] = src_table[src_start + i];
@@ -64,7 +66,6 @@ class CRCService {
     const { POLYNOMIAL, KEY_LENGTH } = CRC_TYPES[type];
     let crc = new Array(KEY_LENGTH)
     let temp = new Array(data.length + KEY_LENGTH);
-    let debug = '';
 
     data = (typeof data === 'string') ? data.split('').map((byte) => parseInt(byte, 10)) : data;
 
@@ -72,16 +73,11 @@ class CRCService {
     initTable(crc);
 
     temp = arrayCopy(data, 0, temp, KEY_LENGTH, data.length);
-    let tKey = new Array(KEY_LENGTH + 1);
-    for (let i = 0; i < KEY_LENGTH + 1; i++) {
-      debug += POLYNOMIAL & (1 << i) + '\n';
-      if ((POLYNOMIAL & (1 << i)) === 0) tKey[i] = 0;
-      else tKey[i] = 1;
-    }
+    let tKey = POLYNOMIAL.toString(2).split('').reverse().map(el => parseInt(el, 10));
 
     let start = data.length + KEY_LENGTH - 1;
     for (start; start > KEY_LENGTH - 1; start--) {
-      if (temp[start] === 1) {
+      if (temp[start] == 1) {
         for (let i = 0; i < KEY_LENGTH + 1; i++) {
           temp[start - i] = temp[start - i] ^ tKey[KEY_LENGTH - i];
         }
@@ -91,10 +87,22 @@ class CRCService {
     return arrayCopy(temp, 0, crc, 0, KEY_LENGTH);
   }
 
-  static fix(data, type = 'crc16') {
-    data = data.split('').map((byte) => parseInt(byte, 10));
+  static fix(dataRecieved, type = 'crc16') {
+    wrongBit = '';
+    dataRecieved = dataRecieved.split('');
+    const crc = this.countCRC(dataRecieved);
+    let ok = true;
+    for (var i = 0; i < CRC_TYPES[type].KEY_LENGTH && ok; i++) {
+      if (crc[i] !== 0) {
+        if (ok) {
+          dataRecieved[i] = dataRecieved[i] ? 0 : 1;
+          wrongBit = i;
+        }
+        ok = false;
+      }
+    }
 
-    return data.join('');
+    return dataRecieved.join('');
   }
 
   static findErrors(dataRecieved, dataSended) {
@@ -103,9 +111,11 @@ class CRCService {
       return -1;
     for (var i = 0; i < dataRecieved.length; i++) {
       if (dataRecieved[i] !== dataSended[i])
-        errors.push(dataRecieved[i])
+        errors.push(i);
     }
-    return errors.join(',');
+
+    console.log('find', wrongBit)
+    return `fixed: ${wrongBit} \n not fixed: ${errors.join(',')}`;
   }
 
   static removeRedundancy() {

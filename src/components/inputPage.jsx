@@ -54,8 +54,8 @@ class InputPage extends Component {
     _clickHandlerDisrupt = (e) => {
         this.setState({ outputSignal: this.state.disruptedSignal },
             () => {
-                this.setState({ outputSignalErr: this.markErrors(this.state.outputSignal) });
-                this.setState({ outputSignalFix: this.fixErrors(this.state.outputSignal) },
+                this.setState({ outputSignalFix: this.fixErrors(this.state.outputSignal) });
+                this.setState({ outputSignalErr: this.markErrors(this.state.outputSignal) },
                     () => { this.setState({ outputSignalRed: this.trimRedundancy(this.state.outputSignalFix) }); }
                 );
             });
@@ -101,7 +101,7 @@ class InputPage extends Component {
     fixErrors(val) {
         switch (this.props.code) {
             case "crc":
-                return CRCService.fix(val, this.state.crctype);
+                return  CRCService.fix(val, this.state.crctype);
             case "hamming":
                 return HammingCodingService.fixErrors(val);
             case "parity":
